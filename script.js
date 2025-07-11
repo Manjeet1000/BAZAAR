@@ -1,13 +1,20 @@
-fetch("https://script.google.com/macros/s/your-script-id/exec")
-  .then(res => res.json())
+document.getElementById("expense-form").addEventListener("submit", function(e) {
+  e.preventDefault();
+
+  const form = document.getElementById("expense-form");
+  const formData = new FormData(form);
+
+  fetch("/submit", {
+    method: "POST",
+    body: formData
+  })
+  .then(response => response.text())
   .then(data => {
-    data.forEach(stock => {
-      const stockBox = document.createElement('div');
-      stockBox.className = 'stock';
-      stockBox.innerHTML = `
-        <h2>${stock['Stock Name']}</h2>
-        <div class="price">₹${stock['Price (auto)']}</div>
-      `;
-      document.getElementById('stock-list').appendChild(stockBox);
-    });
+    document.getElementById("message").innerText = data;
+    form.reset();
+  })
+  .catch(error => {
+    document.getElementById("message").innerText = "Error saving data.";
+    console.error(error);
   });
+});
